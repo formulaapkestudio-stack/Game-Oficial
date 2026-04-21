@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fórmula Game | Arena Multiplayer</title>
+    <style>
+        :root {
+            --gold: #d4af37;
+            --gold-glow: rgba(212, 175, 55, 0.3);
+            --dark-bg: #050505;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            background: radial-gradient(circle at center, #111 0%, var(--dark-bg) 100%);
+            color: white;
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            padding: 10px;
+            overflow: hidden;
+        }
+
+        /* --- LOBBY INICIAL --- */
+        #lobby {
+            position: fixed;
+            inset: 0;
+            background: var(--dark-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        .login-card {
+            background: var(--glass);
+            padding: 35px;
+            border-radius: 30px;
+            border: 1px solid var(--glass-border);
+            text-align: center;
+            backdrop-filter: blur(20px);
+            width: 90%;
+            max-width: 360px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        input {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            padding: 18px;
+            border-radius: 15px;
+            color: white;
+            width: 100%;
+            margin: 25px 0;
+            text-align: center;
+            font-size: 1.1rem;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus { border-color: var(--gold); }
+
+        /* --- ARENA DE JOGO --- */
+        .arena {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 400px;
+            height: 90vh;
+            justify-content: space-around;
+        }
+
+        /* PAINEL DE NOMES NO TOPO */
+        .duel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            background: var(--glass);
+            padding: 20px;
+            border-radius: 25px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .player-info {
+            text-align: center;
+            flex: 1;
+            transition: 0.4s;
+            padding: 10px;
+            border-radius: 15px;
+        }
+
+        .player-info.active {
+            background: var(--gold-glow);
+            border: 1px solid var(--gold);
+            transform: scale(1.05);
+        }
+
+        .player-name {
+            font-weight: 800;
+            font-size: 1rem;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 5px;
+        }
+
+        .symbol-badge {
+            font-size: 0.7rem;
+            color: var(--gold);
+            font-weight: bold;
+            opacity: 0.8;
+        }
+
+        .vs-badge {
+            font-weight: 900;
+            color: var(--gold);
+            font-style: italic;
+            padding: 0 15px;
+            opacity: 0.6;
+        }
+
+        /* TABULEIRO */
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            width: 100%;
+            aspect-ratio: 1/1;
+            padding: 10px;
+        }
+
+        .cell {
+            background: var(--glass);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            font-weight: 900;
+            border: 1px solid var(--glass-border);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .cell.x { color: var(--gold); text-shadow: 0 0 20px var(--gold-glow); }
+        .cell.o { color: #fff; text-shadow: 0 0 20px rgba(255,255,255,0.3); }
+
+        .game-status {
+            font-size: 1.2rem;
+            font-weight: 300;
+            color: var(--gold);
+            text-align: center;
+            min-height: 1.5rem;
+        }
+
+        .btn-action {
+            background: var(--gold);
+            color: black;
+            border: none;
+            padding: 18px;
+            border-radius: 50px;
+            font-weight: bold;
+            text-transform: uppercase;
+            width: 100%;
+            cursor: pointer;
+            letter-spacing: 1px;
+        }
+
+        #reset-btn {
+            background: transparent;
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            color: var(--gold);
+            padding: 10px 25px;
+            width: auto;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="lobby">
+        <div class="login-card">
+            <h2 style="color:var(--gold); margin:0;">FÓRMULA GAME</h2>
+            <input type="text" id="user-name" placeholder="Nome do Jogador" maxlength="12">
+            <button class="btn-action" id="btn-entrar">Entrar na Arena</button>
+        </div>
+    </div>
+
+    <div class="arena" id="arena">
+        <div class="duel-header">
+            <div class="player-info" id="p1-card">
+                <span class="symbol-badge">JOGADOR X</span>
+                <div class="player-name" id="p1-name">---</div>
+            </div>
+            <div class="vs-badge">VS</div>
+            <div class="player-info" id="p2-card">
+                <span class="symbol-badge">JOGADOR O</span>
+                <div class="player-name" id="p2-name">---</div>
+            </div>
+        </div>
+
+        <div class="game-status" id="status">Aguardando...</div>
+
+        <div class="board" id="board">
+            <div class="cell" data-i="0"></div>
+            <div class="cell" data-i="1"></div>
+            <div class="cell" data-i="2"></div>
+            <div class="cell" data-i="3"></div>
+            <div class="cell" data-i="4"></div>
+            <div class="cell" data-i="5"></div>
+            <div class="cell" data-i="6"></div>
+            <div class="cell" data-i="7"></div>
+            <div class="cell" data-i="8"></div>
+        </div>
+
+        <button class="btn-action" id="reset-btn">Limpar Arena</button>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onValue, update, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAmC9-ZLE6MZ8XULsms2wm8TmiPSxA34Ak",
+            authDomain: "formula-game-f3d82.firebaseapp.com",
+            projectId: "formula-game-f3d82",
+            storageBucket: "formula-game-f3d82.firebasestorage.app",
+            messagingSenderId: "984448778074",
+            appId: "1:984448778074:web:cba5b71e137d1ea13dbd63"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const gameRef = ref(db, 'tic-tac-toe/v_topo_final');
+
+        let mySymbol = null;
+        let myName = "";
+        let boardState = Array(9).fill("");
+        let turn = "X";
+
+        document.getElementById('btn-entrar').onclick = () => {
+            const nameInput = document.getElementById('user-name').value;
+            if (nameInput.trim()) {
+                myName = nameInput;
+                document.getElementById('lobby').style.display = 'none';
+                document.getElementById('arena').style.display = 'flex';
+                iniciarSincronizacao();
+            }
+        };
+
+        function iniciarSincronizacao() {
+            onValue(gameRef, (snap) => {
+                const data = snap.val();
+                if (!data) {
+                    set(gameRef, { board: Array(9).fill(""), turn: "X", p1: myName, p2: "Aguardando..." });
+                    mySymbol = "X";
+                } else {
+                    boardState = data.board;
+                    turn = data.turn;
+
+                    if (!mySymbol) {
+                        if (data.p1 && (data.p2 === "Aguardando..." || !data.p2)) {
+                            mySymbol = "O";
+                            update(gameRef, { p2: myName });
+                        } else { mySymbol = "X"; }
+                    }
+                    
+                    document.getElementById('p1-name').innerText = data.p1 || "---";
+                    document.getElementById('p2-name').innerText = data.p2 || "---";
+                    atualizarUI();
+                }
+            });
+        }
+
+        function atualizarUI() {
+            const cells = document.querySelectorAll('.cell');
+            cells.forEach((cell, i) => {
+                cell.innerText = boardState[i] || "";
+                cell.className = `cell ${boardState[i].toLowerCase()}`;
+            });
+
+            document.getElementById('p1-card').classList.toggle('active', turn === "X");
+            document.getElementById('p2-card').classList.toggle('active', turn === "O");
+
+            const vitoria = conferirVitoria();
+            const statusTxt = document.getElementById('status');
+            
+            if (vitoria) {
+                statusTxt.innerText = vitoria === "Empate" ? "🏁 EMPATE!" : `🏆 VITÓRIA: ${vitoria}`;
+            } else {
+                statusTxt.innerText = turn === mySymbol ? "⚡ SUA VEZ!" : "⏳ AGUARDANDO...";
+            }
+        }
+
+        document.getElementById('board').onclick = (e) => {
+            const i = e.target.dataset.i;
+            if (i && boardState[i] === "" && turn === mySymbol && !conferirVitoria()) {
+                boardState[i] = mySymbol;
+                update(gameRef, { board: boardState, turn: mySymbol === "X" ? "O" : "X" });
+            }
+        };
+
+        function conferirVitoria() {
+            const combos = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+            for (let c of combos) {
+                if (boardState[c[0]] && boardState[c[0]] === boardState[c[1]] && boardState[c[0]] === boardState[c[2]]) 
+                return boardState[c[0]];
+            }
+            return boardState.includes("") ? null : "Empate";
+        }
+
+        document.getElementById('reset-btn').onclick = () => {
+            set(gameRef, { 
+                board: Array(9).fill(""), 
+                turn: "X", 
+                p1: document.getElementById('p1-name').innerText, 
+                p2: document.getElementById('p2-name').innerText 
+            });
+        };
+    </script>
+</body>
+</html>
