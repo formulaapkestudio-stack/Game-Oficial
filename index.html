@@ -3,200 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fórmula Game | Arena Mobile</title>
+    <title>Fórmula Game | Arena Final</title>
     <style>
-        :root {
-            --gold: #d4af37;
-            --dark: #050505;
-            --glass: rgba(255, 255, 255, 0.03);
-            --border: rgba(255, 255, 255, 0.08);
-        }
-
+        :root { --gold: #d4af37; --dark: #050505; --glass: rgba(255, 255, 255, 0.05); }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-
-        body {
-            background: radial-gradient(circle at center, #111, var(--dark));
-            color: white;
-            font-family: 'Segoe UI', Roboto, sans-serif;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden; /* Trava o scroll */
-        }
-
-        /* --- LOBBY --- */
-        #lobby {
-            position: fixed;
-            inset: 0;
-            background: var(--dark);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-        }
-
-        .card-login {
-            background: var(--glass);
-            padding: 30px;
-            border-radius: 30px;
-            border: 1px solid var(--border);
-            backdrop-filter: blur(20px);
-            text-align: center;
-            width: 85%;
-            max-width: 350px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-        }
-
-        input {
-            width: 100%;
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 15px;
-            border: 1px solid var(--border);
-            background: rgba(0,0,0,0.5);
-            color: white;
-            text-align: center;
-            font-size: 1.1rem;
-            outline: none;
-        }
-
-        /* --- ARENA --- */
-        .arena {
-            display: none;
-            flex-direction: column;
-            width: 100%;
-            max-width: 400px;
-            height: 95vh; /* Ocupa quase toda a altura */
-            padding: 15px;
-            justify-content: space-between; /* Espaçamento inteligente */
-            align-items: center;
-        }
-
-        .header-duel {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            background: var(--glass);
-            padding: 12px;
-            border-radius: 20px;
-            border: 1px solid var(--border);
-        }
-
-        .p-box {
-            text-align: center;
-            flex: 1;
-            padding: 8px;
-            border-radius: 12px;
-            transition: 0.4s;
-        }
-
-        .p-box.active {
-            background: rgba(212, 175, 55, 0.15);
-            border: 1px solid var(--gold);
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
-        }
-
-        .p-name { font-weight: bold; font-size: 0.85rem; text-transform: uppercase; color: #fff; margin-top: 3px; }
-
-        .board {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            width: 100%;
-            aspect-ratio: 1/1; /* Garante o quadrado perfeito */
-            padding: 5px;
-        }
-
-        .cell {
-            background: var(--glass);
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: clamp(2.5rem, 12vw, 3.5rem);
-            font-weight: 900;
-            border: 1px solid var(--border);
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .cell.x { color: var(--gold); text-shadow: 0 0 15px var(--gold); }
-        .cell.o { color: #fff; text-shadow: 0 0 15px #fff; }
-
-        .status { 
-            font-size: 1.1rem; 
-            font-weight: bold; 
-            color: var(--gold); 
-            text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
-            text-align: center;
-        }
-
-        .btn-gold {
-            background: var(--gold);
-            color: black;
-            border: none;
-            padding: 15px;
-            border-radius: 50px;
-            font-weight: bold;
-            width: 100%;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        #reset {
-            background: transparent;
-            color: var(--gold);
-            border: 1px solid rgba(212, 175, 55, 0.4);
-            padding: 8px 20px;
-            width: auto;
-            font-size: 0.7rem;
-            border-radius: 50px;
-        }
+        body { background: #000; color: white; font-family: sans-serif; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        
+        #lobby { position: fixed; inset: 0; background: #000; display: flex; align-items: center; justify-content: center; z-index: 100; }
+        .card { background: var(--glass); padding: 30px; border-radius: 20px; text-align: center; width: 90%; max-width: 320px; border: 1px solid rgba(255,255,255,0.1); }
+        input { width: 100%; padding: 15px; margin: 20px 0; border-radius: 10px; border: 1px solid var(--gold); background: #000; color: #fff; text-align: center; }
+        
+        .arena { display: none; flex-direction: column; width: 100%; max-width: 400px; height: 90vh; justify-content: space-between; padding: 20px; }
+        .header { display: flex; justify-content: space-between; background: var(--glass); padding: 15px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); }
+        .p-box { text-align: center; flex: 1; padding: 5px; border-radius: 10px; }
+        .p-box.active { background: rgba(212, 175, 55, 0.2); border: 1px solid var(--gold); }
+        
+        .board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; aspect-ratio: 1/1; }
+        .cell { background: var(--glass); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 3rem; font-weight: bold; border: 1px solid rgba(255,255,255,0.1); }
+        .cell.x { color: var(--gold); }
+        .cell.o { color: #fff; }
+        
+        .status { text-align: center; color: var(--gold); font-weight: bold; }
+        .btn { background: var(--gold); color: #000; border: none; padding: 15px; border-radius: 50px; font-weight: bold; width: 100%; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <div id="lobby">
-        <div class="card-login">
-            <h2 style="color:var(--gold); letter-spacing: 2px;">FÓRMULA GAME</h2>
+        <div class="card">
+            <h2 style="color:var(--gold)">FÓRMULA GAME</h2>
             <input type="text" id="username" placeholder="Seu Nome">
-            <button class="btn-gold" id="startBtn">Entrar na Arena</button>
+            <button class="btn" id="startBtn">ENTRAR NA ARENA</button>
         </div>
     </div>
 
     <div class="arena" id="arena">
-        <div class="header-duel">
-            <div class="p-box" id="cardX">
-                <small style="color: var(--gold);">PLAYER X</small>
-                <div class="p-name" id="nameX">---</div>
-            </div>
-            <div style="font-weight:bold; color:var(--gold); padding: 0 10px; font-style: italic;">VS</div>
-            <div class="p-box" id="cardO">
-                <small style="color: white;">PLAYER O</small>
-                <div class="p-name" id="nameO">---</div>
-            </div>
+        <div class="header">
+            <div id="cardX" class="p-box"><small>PLAYER X</small><div id="nameX">---</div></div>
+            <div style="align-self:center; color:var(--gold)">VS</div>
+            <div id="cardO" class="p-box"><small>PLAYER O</small><div id="nameO">---</div></div>
         </div>
-
-        <div class="status" id="statusTxt">Carregando...</div>
-
+        <div id="statusTxt" class="status">Conectando...</div>
         <div class="board" id="board">
-            <div class="cell" data-i="0"></div>
-            <div class="cell" data-i="1"></div>
-            <div class="cell" data-i="2"></div>
-            <div class="cell" data-i="3"></div>
-            <div class="cell" data-i="4"></div>
-            <div class="cell" data-i="5"></div>
-            <div class="cell" data-i="6"></div>
-            <div class="cell" data-i="7"></div>
-            <div class="cell" data-i="8"></div>
+            <div class="cell" data-i="0"></div><div class="cell" data-i="1"></div><div class="cell" data-i="2"></div>
+            <div class="cell" data-i="3"></div><div class="cell" data-i="4"></div><div class="cell" data-i="5"></div>
+            <div class="cell" data-i="6"></div><div class="cell" data-i="7"></div><div class="cell" data-i="8"></div>
         </div>
-
-        <div style="width: 100%; text-align: center;">
-            <button id="reset">Resetar Tabuleiro</button>
-        </div>
+        <button id="reset" style="background:transparent; color:var(--gold); border:1px solid var(--gold); padding:5px; border-radius:10px;">Resetar</button>
     </div>
 
     <script type="module">
@@ -214,7 +67,7 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-        const gameRef = ref(db, 'tic-tac-toe/v_mobile_final');
+        const gameRef = ref(db, 'partida_multiplayer/v1');
 
         let myName = "";
         let mySymbol = null;
@@ -231,28 +84,39 @@
         };
 
         function conectar() {
-            onValue(gameRef, (snapshot) => {
-                const data = snapshot.val();
-                if(!data) {
+            onValue(gameRef, (snap) => {
+                const data = snap.val();
+                if (!data) {
                     set(gameRef, { board: Array(9).fill(""), turn: "X", pX: myName, pO: "Aguardando..." });
                     mySymbol = "X";
                 } else {
                     board = data.board || Array(9).fill("");
                     turn = data.turn;
-                    if(!mySymbol) {
-                        if(data.pX && (data.pO === "Aguardando..." || !data.pO)) {
+                    
+                    // Lógica de Atribuição de Símbolo
+                    if (!mySymbol) {
+                        if (data.pX === myName) {
+                            mySymbol = "X";
+                        } else if (data.pO === "Aguardando..." || !data.pO) {
                             mySymbol = "O";
                             update(gameRef, { pO: myName });
-                        } else { mySymbol = "X"; }
+                        } else if (data.pO === myName) {
+                            mySymbol = "O";
+                        } else {
+                            // Se já houver dois jogadores diferentes de você
+                            alert("A arena está cheia! Você entrará como espectador (X).");
+                            mySymbol = "X"; 
+                        }
                     }
+
                     document.getElementById('nameX').innerText = data.pX || "---";
                     document.getElementById('nameO').innerText = data.pO || "---";
-                    render();
+                    atualizarTela();
                 }
             });
         }
 
-        function render() {
+        function atualizarTela() {
             const cells = document.querySelectorAll('.cell');
             cells.forEach((c, i) => {
                 c.innerText = board[i];
@@ -262,33 +126,34 @@
             document.getElementById('cardX').classList.toggle('active', turn === "X");
             document.getElementById('cardO').classList.toggle('active', turn === "O");
 
-            const win = checkWin();
-            const status = document.getElementById('statusTxt');
-            if(win) {
-                status.innerText = win === "Empate" ? "🏁 EMPATE!" : "🏆 VENCEDOR: " + win;
+            const vitoria = conferirVitoria();
+            const st = document.getElementById('statusTxt');
+            if(vitoria) {
+                st.innerText = vitoria === "Empate" ? "EMPATE!" : "VENCEDOR: " + vitoria;
             } else {
-                status.innerText = turn === mySymbol ? "⚡ SUA VEZ!" : "⏳ OPONENTE JOGANDO...";
+                st.innerText = turn === mySymbol ? "SUA VEZ (" + mySymbol + ")" : "AGUARDE O OPONENTE...";
             }
         }
 
         document.getElementById('board').onclick = (e) => {
             const i = e.target.dataset.i;
-            if(i !== undefined && board[i] === "" && turn === mySymbol && !checkWin()) {
+            if(i !== undefined && board[i] === "" && turn === mySymbol && !conferirVitoria()) {
                 board[i] = mySymbol;
                 update(gameRef, { board: board, turn: mySymbol === "X" ? "O" : "X" });
             }
         };
 
-        function checkWin() {
-            const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-            for(let l of lines) {
-                if(board[l[0]] && board[l[0]] === board[l[1]] && board[l[0]] === board[l[2]]) return board[l[0]];
+        function conferirVitoria() {
+            const caminhos = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+            for(let c of caminhos) {
+                if(board[c[0]] && board[c[0]] === board[c[1]] && board[c[0]] === board[c[2]]) return board[c[0]];
             }
             return board.includes("") ? null : "Empate";
         }
 
         document.getElementById('reset').onclick = () => {
-            set(gameRef, { board: Array(9).fill(""), turn: "X", pX: document.getElementById('nameX').innerText, pO: document.getElementById('nameO').innerText });
+            set(gameRef, { board: Array(9).fill(""), turn: "X", pX: document.getElementById('nameX').innerText, pO: "Aguardando..." });
+            location.reload(); // Recarrega para limpar as variáveis locais
         };
     </script>
 </body>
